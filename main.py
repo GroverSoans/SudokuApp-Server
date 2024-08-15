@@ -5,11 +5,6 @@ import random
 app = Flask(__name__)
 cors = CORS(app, origins='*')  # This will enable CORS for all routes
 
-@app.route("/api/users", methods=['GET'])
-def users():
-    return jsonify({
-        "users": ['grover', 'ben', 'enigma']
-    })
 
 def validMove(board, row, col, num):
     """Check if placing num in board[row][col] is valid according to Sudoku rules."""
@@ -58,6 +53,7 @@ def calcDifficulty(level):
     else:
         return 20
 
+
 def removeNums(board, num_removed):
     """Remove a number of cells from the Sudoku board to create a puzzle."""
     count = 0
@@ -66,12 +62,16 @@ def removeNums(board, num_removed):
         if board[row][col] != 0:
             board[row][col] = 0
             count += 1
+    print(board)  # Debugging: Print the board to verify its state
 
-def generatePuzzle(num_removed=40):
+
+def generatePuzzle(level='medium'):
     """Generate a Sudoku puzzle by removing numbers from a complete board."""
     board = generateSudoku()
-    removeNums(board, num_removed)
+    num_removed = calcDifficulty(level)
+    removeNums(board, int(num_removed))  # Ensure num_removed is an integer
     return board
+
 
 @app.route("/api/sudoku", methods=['GET'])
 def sudoku():
